@@ -42,4 +42,30 @@ histogram.plot2
 range2 = quantile(poll.data2, c(0.025, 0.975)) #(0.3685259, 0.4113546), range = 0.0428287 
 MOE2 = (range2[2]-range2[1])/2 #MOE = 0.02141435, approx 2%
 
+#Task 2
+n = 1004
+yes = round(n*p.true)
+og.sample = tibble(id = 1:n,
+                   measurement = c(rep(1, yes), rep(0,n-yes)))
+og.sample |>
+  summarize(mean = mean(measurement))
+resamples = numeric(10000)
+for(i in 1:10000){
+  resample = sample(x = og.sample$measurement,
+                    size = n,
+                    replace = T)
+  resamples[i] = mean(resample)
+}
+resamples.df = data.frame(x = resamples)
+resampling.plot = ggplot(data = resamples.df, aes(x=x))+                 
+  geom_histogram(aes(y=after_stat(density)),
+                 breaks=seq(0.3,0.5,0.01)) +
+  geom_hline(yintercept=0)+                                 
+  theme_bw()+                                                     
+  geom_density(color = "blue") +
+  xlab("Resample Propportion")+                                     
+  ylab("Density")+                              
+  labs(color = "", title = "Resampling proportion of people satisfied with n = 1004")
 
+resampling.range = quantile(resamples, c(0.025, 0.975)) #(0.3595618, 0.4213147 ), range = 0.0617529
+resampling.MOE = (resampling.range[2]-resampling.range[1])/2 #MOE = 0.03087649 , approx 3%
