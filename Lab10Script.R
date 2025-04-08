@@ -94,3 +94,26 @@ MOE.plot = ggplot(MOE.data, aes(x=n, y = p, fill = MOE)) +
   xlab("n") +
   ylab("p")
 
+#Task 4: Actual Margin of Error Calculation
+n.vec = seq(100, 2000, by = 10)
+p.vec = seq(.01, .99, by = .01)
+alpha = 0.05
+Z = qnorm(1- alpha/2)
+Wilson.data = data.frame(n = numeric(0), p = numeric(0), Wilson.MOE = numeric(0)) #data frame for Wilson MOEs
+for(i in 1:length(n.vec)){
+  for(j in 1:length(p.vec)){
+    n.val = n.vec[i]
+    p.val = p.vec[j]
+    Wilson.MOE = Z*(sqrt(n.val*p.val*(1-p.val) + ((Z^2)/4)))/(n.val + Z^2) #Wilson MOE for current data
+    Wilson.data = rbind(Wilson.data, data.frame(n = n.val, p = p.val, Wilson.MOE = Wilson.MOE)) #add row with current n, p, and Wilson MOE
+  }
+}
+
+Wilson.plot = ggplot(Wilson.data, aes(x=n, y = p, fill = Wilson.MOE)) +
+  geom_raster() +
+  scale_fill_viridis_c(name = "Wilson Margin of Error") +
+  labs(title = "Wilson MOE as a function of sample size and true probability") +
+  xlab("n") +
+  ylab("p") +
+  theme_minimal()
+
