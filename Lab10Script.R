@@ -74,17 +74,23 @@ resampling.MOE = (resampling.range[2]-resampling.range[1])/2 #MOE = 0.03087649 ,
 simulations = 10000
 n.vec = seq(100, 3000, by = 10)
 p.vec = seq(.01, .99, by = .01)
-matrix = expand.grid(n = n.vec, p = p.vec)
-dim(matrix)
-MOE.vec = numeric(57618)
+MOE.data = data.frame(n = numeric(0), p = numeric(0), MOE = numeric(0)) #data frame for MOEs
 for(i in 1:length(n.vec)){
   for(j in 1:length(p.vec)){
     n.val = n.vec[i]
     p.val = p.vec[j]
-    data = rbinom(simulations, n.val, p.val)/n.val
-    range = quantile(data, c(0.025,0.975))
-    MOE = (range[2]-range[1])/2
-    MOE.vec= append(MOE.vec, MOE)
+    data = rbinom(simulations, n.val, p.val)/n.val #new set of data
+    range = quantile(data, c(0.025,0.975)) #range for current data
+    MOE = (range[2]-range[1])/2 #MOE for current data
+    MOE.data = rbind(MOE.data, data.frame(n = n.val, p = p.val, MOE = MOE)) #add row with current n, p, and MOE
   }
 }
+
+#geom_raster plot of estimated MOE
+MOE.plot = ggplot(MOE.data, aes(x=n, y = p, fill = MOE)) +
+  geom_raster() +
+  scale_fill_viridis_c(name = "Margin of Error") +
+  labs(title = "Estimated MOE as a function of sample size and true probability") +
+  xlab("n") +
+  ylab("p")
 
