@@ -117,22 +117,27 @@ pdf
 
 \begin{Figure}
 \includegraphics{Histogram1.pdf}
-\captionof{figure}{10000 polls with n=1004, p= 0.39} \label{fig:histogram1}
+\captionof{figure}{10000 polls with n=1004, p= 0.39}
+\label{fig:histogram1}
 \end{Figure}
 pdf 
   2 
 
 \begin{Figure}
 \includegraphics{Histogram2.pdf}
-\captionof{figure}{10000 polls with n=2008, p= 0.39} \label{fig:histogram2}
+\captionof{figure}{10000 polls with n=2008, p= 0.39}
+\label{fig:histogram2}
 \end{Figure}
 
-You can see that the plots are different, but they do both follow a relatively normal distribution. This is because the samples are random, and the sample sizes are well over 30. One thing you can't see from the graphs are the margins of error. After calculating them, I got a MOE of 0.03037845, approx 3\% for \ref{fig:histogram1}, 
+You can see that the plots are different, but they do both follow a relatively normal distribution. This is because the samples are random, and the sample sizes are well over 30. One thing you can't see from the graphs are the margins of error. After calculating them, I got an MOE of 0.03037845 (approx 3\%) for figure \ref{fig:histogram1}, and an MOE of 0.02141435 (approx 2\%) for figure \ref{fig:histogram2}. So although they line up pretty well for the 2008 sample size, the MOE was not halved. It's hard to know how different my MOE is from Gallup's for the original sample size because we don't know how much he rounded by, but there is definitely a difference.
 
+\begin{Figure}
+\includegraphics{Resampling.pdf}
+\captionof{figure}{Resampling sample proportion} 
+\label{fig:resampling}
+\end{Figure}
 \section{Discussion}
- You should objectively evaluate the evidence you found in the data. Do not embellish or wish-terpet (my made-up phase for making an interpretation you, or the researcher, wants to be true without the data \emph{actually} supporting it). Connect your findings to the existing information you provided in the Introduction.
-
-Finally, provide some concluding remarks that tie together the entire paper. Think of the last part of the results as abstract-like. Tell the reader what they just consumed -- what's the takeaway message?
+Maybe it is less worth the extra money to go from 3\% to 2\%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bibliography

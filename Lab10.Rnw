@@ -61,10 +61,9 @@ I also said that I want to test Gallup's statement about how the MOE changes whe
 Lastly, in order to see MOE's relationship with both sample size (n) and proportion (p), we can again use \texttt{rbinom()} to simulate the data, and \texttt{quantile()} to calculate the range and eventually the MOE. Now that we have two independent variables, we can use \texttt{geom\textunderscore raster()}. This will make a plot that is easy to visualize the MOE's relationship with both variables.
 \section{Results}
 Below are the histograms of 10000 polls with sample size 1004, and then with sample size 2008 (doubled).
-<<echo=F, warning=F, message=F, results = "asis", fig.width=3, fig.height=1>>=
+<<echo=F, warning=F, message=F, results = "hide", fig.width=3, fig.height=1>>=
 library(tidyverse)
 library(ggplot2)
-library(patchwork)
 simulations = 10000
 sample.size1 = 1004
 p.true = 0.39
@@ -85,9 +84,10 @@ dev.off()
 @
 \begin{Figure}
 \includegraphics{Histogram1.pdf}
-\captionof{figure}{10000 polls with n=1004, p= 0.39} \label{fig:histogram1}
+\captionof{figure}{10000 polls with n=1004, p= 0.39}
+\label{fig:histogram1}
 \end{Figure}
-<<echo=F, warning=F, message=F, results = "asis", fig.width=3, fig.height=1>>=
+<<echo=F, warning=F, message=F, results = "hide", fig.width=3, fig.height=1>>=
 sample.size2 = 2008
 poll.data2 = rbinom(simulations, sample.size2, p.true)/sample.size2
 df2 = data.frame(x=poll.data2)
@@ -101,20 +101,57 @@ histogram.plot2 = ggplot(data = df2, aes(x=x))+
   ylab("Density")+                              
   labs(color = "", title = "Proportion of people satisfied from polls with n = 2008")
 pdf("Histogram2.pdf", width=3, height=2)
-histogram.plot2
+print(histogram.plot2)
 dev.off()
 @
 \begin{Figure}
 \includegraphics{Histogram2.pdf}
-\captionof{figure}{10000 polls with n=2008, p= 0.39} \label{fig:histogram2}
+\captionof{figure}{10000 polls with n=2008, p= 0.39}
+\label{fig:histogram2}
 \end{Figure}
 
-You can see that the plots are different, but they do both follow a relatively normal distribution. This is because the samples are random, and the sample sizes are well over 30. One thing you can't see from the graphs are the margins of error. After calculating them, I got an MOE of 0.03037845, approx 3\% for figure \ref{fig:histogram1}, and an MOE
+You can see that the plots are different, but they do both follow a relatively normal distribution. This is because the samples are random, and the sample sizes are well over 30. One thing you can't see from the graphs are the margins of error. After calculating them, I got an MOE of 0.03037845 (approx 3\%) for figure \ref{fig:histogram1}, and an MOE of 0.02141435 (approx 2\%) for figure \ref{fig:histogram2}. So although they line up pretty well for the 2008 sample size, the MOE was not halved. It's hard to know how different my MOE is from Gallup's for the original sample size because we don't know how much he rounded by, but there is definitely a difference.
 
+Now let's look at the sampling distribution for p from using the resampling method. 
+<<echo=F, warning=F, message=F, results = "hide", fig.width=3, fig.height=1>>=
+library(tidyverse)
+n = 1004
+yes = round(n*p.true)
+og.sample = data.frame(id = 1:n,
+                   measurement = c(rep(1, yes), rep(0,n-yes)))
+og.sample |>
+  summarize(mean = mean(measurement))
+resamples = numeric(10000)
+for(i in 1:10000){
+  resample = sample(x = og.sample$measurement,
+                    size = n,
+                    replace = T)
+  resamples[i] = mean(resample)
+}
+resamples.df = data.frame(x = resamples)
+resampling.plot = ggplot(data = resamples.df, aes(x=x))+                 
+  geom_histogram(aes(y=after_stat(density)),
+                 breaks=seq(0.3,0.5,0.01)) +
+  geom_hline(yintercept=0)+                                 
+  theme_bw()+                                                     
+  geom_density(color = "blue") +
+  xlab("Resample Propportion")+                                     
+  ylab("Density")+                              
+  labs(color = "", title = "Resampling proportion")
+pdf("Resampling.pdf", width=3, height=2)
+(resampling.plot)
+dev.off()
+@
+\begin{Figure}
+\includegraphics{Resampling.pdf}
+\captionof{figure}{Resampling sample proportion} 
+\label{fig:resampling}
+\end{Figure}
+We can see again that it follows a relatively normal distribution for the same reasons as before. For this distribution, I calculated an MOE of 0.03087649 (approx 3\%). This is very similar to the MOE from before when using a sample size of 1004. So our resampling method was successfull in giving us a very similar distribution to the real data, without making any assumptions about the population proportion.
+
+Finally, let's look at plots of the MOE, with respect to sample size and proportion.
 \section{Discussion}
- You should objectively evaluate the evidence you found in the data. Do not embellish or wish-terpet (my made-up phase for making an interpretation you, or the researcher, wants to be true without the data \emph{actually} supporting it). Connect your findings to the existing information you provided in the Introduction.
-
-Finally, provide some concluding remarks that tie together the entire paper. Think of the last part of the results as abstract-like. Tell the reader what they just consumed -- what's the takeaway message?
+Maybe it is less worth the extra money to go from 3\% to 2\%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bibliography
