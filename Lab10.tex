@@ -112,16 +112,12 @@ I also said that I want to test Gallup's statement about how the MOE changes whe
 Lastly, in order to see MOE's relationship with both sample size (n) and proportion (p), we can again use \texttt{rbinom()} to simulate the data, and \texttt{quantile()} to calculate the range and eventually the MOE. Now that we have two independent variables, we can use \texttt{geom\textunderscore raster()}. This will make a plot that is easy to visualize the MOE's relationship with both variables.
 \section{Results}
 Below are the histograms of 10000 polls with sample size 1004, and then with sample size 2008 (doubled).
-pdf 
-  2 
 
 \begin{Figure}
 \includegraphics{Histogram1.pdf}
 \captionof{figure}{10000 polls with n=1004, p= 0.39}
 \label{fig:histogram1}
 \end{Figure}
-pdf 
-  2 
 
 \begin{Figure}
 \includegraphics{Histogram2.pdf}
@@ -131,34 +127,43 @@ pdf
 
 You can see that the plots are different, but they do both follow a relatively normal distribution. This is because the samples are random, and the sample sizes are well over 30. One thing you can't see from the graphs are the margins of error. After calculating them, I got an MOE of 0.03037845 (approx 3\%) for figure \ref{fig:histogram1}, and an MOE of 0.02141435 (approx 2\%) for figure \ref{fig:histogram2}. So although they line up pretty well for the 2008 sample size, the MOE was not halved. It's hard to know how different my MOE is from Gallup's for the original sample size because we don't know how much he rounded by, but there is definitely a difference.
 
+Now let's look at the sampling distribution for p from using the resampling method. 
+
 \begin{Figure}
 \includegraphics{Resampling.pdf}
 \captionof{figure}{Resampling sample proportion} 
 \label{fig:resampling}
 \end{Figure}
+We can see again that it follows a relatively normal distribution for the same reasons as before. For this distribution, I calculated an MOE of 0.03087649 (approx 3\%). This is very similar to the MOE from before when using a sample size of 1004. So our resampling method was successfull in giving us a very similar distribution to the real data, without making any assumptions about the population proportion.
+
+Finally, let's look at \texttt{geom\textunderscore raster()} plots of the MOE, with respect to sample size and proportion.
+
+\begin{Figure}
+\includegraphics{MOE.pdf}
+\captionof{figure}{MOE vs. n and p} 
+\label{fig:MOE}
+\end{Figure}
+
+\begin{Figure}
+\includegraphics{Wilson.plot.pdf}
+\captionof{figure}{Wilson MOE vs. n and p} 
+\label{fig:Wilson}
+\end{Figure}
+Figure \ref{fig:MOE} is the estimated margin of error, and Figure \ref{fig:Wilson} is the estimated Wilson margin of error. As you can see, the MOE on both plots definitely decreases as sample size increases. However, sample proportion p definitely has influence as well. When p is near 0 or 1, the MOE is small even when n is small. This is because the p(1-p) in the MOE formula is very small if p is near 0 or 1, resulting in the entire formula resulting in a small value. You can see based on the color that when p is near 0 or 1, and n is big, the MOE gets even lower than 2\%
 \section{Discussion}
-Maybe it is less worth the extra money to go from 3\% to 2\%
+Obviously someone conducting public opinion polls can't control what the sample proportion is going to be, but they should keep in mind that if the proportion is not going to be anywhere near 0 or 1, they will need a larger sample size in order to get a small MOE. So for Gallup, 0.39 is a pretty centered proportion, so 1004 may not be quite large enough of a sample size if the goal is to get a very small margin of error.
+
+An important question is: Is it worth it to double the cost, in order to go from a 4\% MOE to a 2\% MOE? And based on my calulations, it was actually from a 3\% MOE to a 2\% MOE, meaning it decreased by 33\%. obviously it depends on the budget of the pollster, and the goal for the MOE. However, I think for big companies it is typically worth the extra money, because having the most accurate and precise polls is how to become the most credible and popular source.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bibliography
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \vspace{2em}
 
-\noindent\textbf{Bibliography:} Note that when you add citations to your bib.bib file \emph{and}
-you cite them in your document, the bibliography section will automatically populate here.
-
 \begin{tiny}
 \bibliography{bibliography}
 \end{tiny}
 \end{multicols}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Appendix
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newpage
-\onecolumn
-\section{Appendix}
-
-If you have anything extra, you can add it here in the appendix. This can include images or tables that don't work well in the two-page setup, code snippets you might want to share, etc.
 
 \end{document}
