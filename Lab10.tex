@@ -1,4 +1,54 @@
-\documentclass{article}
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{xcolor}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlsng}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hldef}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
 \usepackage{amsmath} %This allows me to use the align functionality.
                      %If you find yourself trying to replicate
                      %something you found online, ensure you're
@@ -21,6 +71,7 @@
 \newenvironment{Figure}
   {\par\medskip\noindent\minipage{\linewidth}}
   {\endminipage\par\medskip}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
 
 \vspace{-1in}
@@ -61,55 +112,22 @@ I also said that I want to test Gallup's statement about how the MOE changes whe
 Lastly, in order to see MOE's relationship with both sample size (n) and proportion (p), we can again use \texttt{rbinom()} to simulate the data, and \texttt{quantile()} to calculate the range and eventually the MOE. Now that we have two independent variables, we can use \texttt{geom\textunderscore raster()}. This will make a plot that is easy to visualize the MOE's relationship with both variables.
 \section{Results}
 Below are the histograms of 10000 polls with sample size 1004, and then with sample size 2008 (doubled).
-<<echo=F, warning=F, message=F, results = "asis", fig.width=3, fig.height=1>>=
-library(tidyverse)
-library(ggplot2)
-library(patchwork)
-simulations = 10000
-sample.size1 = 1004
-p.true = 0.39
-poll.data1 = rbinom(simulations, sample.size1, p.true)/sample.size1
-df1 = data.frame(x=poll.data1)
-histogram.plot1 = ggplot(data = df1, aes(x=x))+         
-  geom_histogram(aes(y=after_stat(density)),
-                 breaks=seq(0.3,0.5,0.01)) +
-  geom_hline(yintercept=0)+                      
-  theme_bw()+                                     
-  geom_density(color = "blue") +
-  xlab("Sample Propportion")+                 
-  ylab("Density")+             
-  labs(color = "", title = "Proportion of people satisfied")
-pdf("Histogram1.pdf", width=3, height=2)
-print(histogram.plot1)
-dev.off()
-@
+pdf 
+  2 
+
 \begin{Figure}
 \includegraphics{Histogram1.pdf}
 \captionof{figure}{10000 polls with n=1004, p= 0.39} \label{fig:histogram1}
 \end{Figure}
-<<echo=F, warning=F, message=F, results = "asis", fig.width=3, fig.height=1>>=
-sample.size2 = 2008
-poll.data2 = rbinom(simulations, sample.size2, p.true)/sample.size2
-df2 = data.frame(x=poll.data2)
-histogram.plot2 = ggplot(data = df2, aes(x=x))+                 
-  geom_histogram(aes(y=after_stat(density)),
-                 breaks=seq(0.3,0.5,0.01)) +
-  geom_hline(yintercept=0)+                                 
-  theme_bw()+                                                     
-  geom_density(color = "blue") +
-  xlab("Sample Propportion")+                                     
-  ylab("Density")+                              
-  labs(color = "", title = "Proportion of people satisfied from polls with n = 2008")
-pdf("Histogram2.pdf", width=3, height=2)
-histogram.plot2
-dev.off()
-@
+pdf 
+  2 
+
 \begin{Figure}
 \includegraphics{Histogram2.pdf}
 \captionof{figure}{10000 polls with n=2008, p= 0.39} \label{fig:histogram2}
 \end{Figure}
 
-You can see that the plots are different, but they do both follow a relatively normal distribution. This is because the samples are random, and the sample sizes are well over 30. One thing you can't see from the graphs are the margins of error. After calculating them, I got an MOE of 0.03037845, approx 3\% for figure \ref{fig:histogram1}, and an MOE
+You can see that the plots are different, but they do both follow a relatively normal distribution. This is because the samples are random, and the sample sizes are well over 30. One thing you can't see from the graphs are the margins of error. After calculating them, I got a MOE of 0.03037845, approx 3\% for \ref{fig:histogram1}, 
 
 \section{Discussion}
  You should objectively evaluate the evidence you found in the data. Do not embellish or wish-terpet (my made-up phase for making an interpretation you, or the researcher, wants to be true without the data \emph{actually} supporting it). Connect your findings to the existing information you provided in the Introduction.
